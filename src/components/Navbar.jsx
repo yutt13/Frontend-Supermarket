@@ -2,11 +2,13 @@ import React, { useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaUserEdit } from 'react-icons/fa'; // นำเข้าไอคอนแก้ไขโปรไฟล์
 import { AuthContext } from '../pages/AuthContext'; // ตรวจสอบ path ให้ถูกต้อง
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const { user, logout } = useContext(AuthContext); // ใช้ useContext เพื่อดึง user และ logout
+const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -14,7 +16,11 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Searching for:', searchTerm);
+    if (searchTerm.trim()) {
+      const url = `/products?keyword=${encodeURIComponent(searchTerm)}`;
+      console.log('Navigating to:', url); // ตรวจสอบ URL
+      navigate(url);
+    }
   };
 
   return (

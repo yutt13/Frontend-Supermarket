@@ -4,10 +4,15 @@ import { Link } from "react-router-dom";
 import arrow from "../img/arrow.png";
 import Layout from "../components/Layout";
 import { FaShoppingCart } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
+import { searchProducts } from '../services/api';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const keyword = searchParams.get('keyword');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -20,6 +25,21 @@ const Products = () => {
     };
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await searchProducts(); // ดึงข้อมูลสินค้าทั้งหมด
+        const filteredProducts = response.data.filter((product) =>
+          product.name.toLowerCase().includes(keyword.toLowerCase())
+        );
+        setProducts(filteredProducts);
+      } catch (error) {
+        console.error('Search failed:', error);
+      }
+    };
+    fetchProducts();
+  }, [keyword]);
 
   const handleDelete = async (id) => {
     try {
