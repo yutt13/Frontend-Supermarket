@@ -1,85 +1,59 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const navigate = useNavigate();
 
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    const newItem = {
-      id: Date.now(), // สร้าง ID แบบง่ายๆ
-      name,
-      price: parseFloat(price),
-      quantity: parseInt(quantity),
-    };
-    setCartItems([...cartItems, newItem]);
-    setName('');
-    setPrice('');
-    setQuantity('');
-    alert('สินค้าถูกเพิ่มลงในตะกร้า!');
-  };
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    setCartItems(storedCart);
+  }, []);
 
   const handleRemoveItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    const updatedCart = cartItems.filter((item) => item.id !== id);
+    setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
 
+  const handleDecreaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+    ).filter((item) => item.quantity > 0); // ลบสินค้าที่มีจำนวนเป็น 0
+    setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
+
+  const handleIncreaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
 
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">ตะกร้าสินค้า</h2>
-      
-      {/* Form สำหรับเพิ่มสินค้า */}
-      <form onSubmit={handleAddToCart} className="space-y-4 mb-8">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">ชื่อสินค้า</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">ราคา</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">จำนวน</label>
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500"
-        >
-          เพิ่มสินค้าใส่ในตะกร้า
-        </button>
-      </form>
-
-      {/* แสดงรายการสินค้าในตะกร้า */}
       <div className="space-y-4">
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
             <div key={item.id} className="p-4 border rounded-md shadow-sm">
               <h3 className="text-lg font-semibold">{item.name}</h3>
               <p>ราคา: {item.price} บาท</p>
-              <p>จำนวน: {item.quantity}</p>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleDecreaseQuantity(item.id)}
+                  className="px-2 py-1 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-500"
+                >
+                  -
+                </button>
+                <p>จำนวน: {item.quantity}</p>
+                <button
+                  onClick={() => handleIncreaseQuantity(item.id)}
+                  className="px-2 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-500"
+                >
+                  +
+                </button>
+              </div>
               <p>รวม: {(item.price * item.quantity).toFixed(2)} บาท</p>
               <button
                 onClick={() => handleRemoveItem(item.id)}
