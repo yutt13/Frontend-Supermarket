@@ -1,19 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react'; // เพิ่ม useContext
 import { login } from '../services/api';
 import { useNavigate } from 'react-router-dom'; // ใช้ useNavigate สำหรับการนำทาง
 import arrow from '../img/arrow.png'; // นำเข้าไฟล์ PNG
+import { AuthContext } from '../pages/AuthContext'; // ตรวจสอบ path ให้ถูกต้อง
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const { login: authLogin } = useContext(AuthContext); // ใช้ useContext เพื่อดึง authLogin
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await login({ email, password });
-      localStorage.setItem('user', JSON.stringify(response.user));
-      alert('Login successful!');
-      navigate('/');
+      if (response.user) {
+        authLogin(response.user); // เรียก authLogin ด้วย user data
+        alert('Login successful!');
+        navigate('/');
+      } else {
+        throw new Error('User data not found in response');
+      }
     } catch (error) {
       alert('Invalid credentials');
     }
@@ -23,12 +30,12 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <button
-                  onClick={() => navigate(-1)} // ใช้ navigate(-1) เพื่อกลับหน้าเดิม
-                  className="absolute left-6 flex text-gray-600 hover:text-gray-800 transition mb-4"
-                >
-                  <img src={arrow} alt="กลับ" className="w-6 h-6 mr-2" /> กลับ
-                </button>
-        
+          onClick={() => navigate(-1)} // ใช้ navigate(-1) เพื่อกลับหน้าเดิม
+          className="absolute left-6 flex text-gray-600 hover:text-gray-800 transition mb-4"
+        >
+          <img src={arrow} alt="กลับ" className="w-6 h-6 mr-2" /> กลับ
+        </button>
+
         <h2 className="text-2xl font-bold text-center text-red-600">เข้าสู่ระบบ SuperMart</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -74,7 +81,6 @@ const Login = () => {
           <button
             type="submit"
             className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-500"
-            
           >
             เข้าสู่ระบบ
           </button>

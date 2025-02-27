@@ -7,13 +7,15 @@ import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import SearchResults from "./pages/Search";
 import Products from "./pages/Products";
-import EditProfile from "./pages/EditProfile";
 import AddToCart from "./pages/Addtocart";
+import Profile from "./pages/Profile";
+import { AuthProvider } from './pages/AuthContext';
 
 
 const App = () => {
   return (
     <>
+    <AuthProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -22,13 +24,12 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/products" element={<Products/>} />
-          <Route path="/profile" element={<EditProfile/>} />
+          <Route path="/profile" element={<Profile/>} />
           <Route path="/cart" element={<AddToCart/>} />
-
-        
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
+    </AuthProvider>
     </>
   );
 };

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaUserEdit } from 'react-icons/fa'; // นำเข้าไอคอนแก้ไขโปรไฟล์
+import { AuthContext } from '../pages/AuthContext'; // ตรวจสอบ path ให้ถูกต้อง
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const { user, logout } = useContext(AuthContext); // ใช้ useContext เพื่อดึง user และ logout
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -33,15 +35,35 @@ const Navbar = () => {
       </form>
 
       <div className='flex items-center space-x-2'>
-        <NavLink to='/profile' className='text-white hover:text-gray-200 transition'>
-          <FaUserEdit className='text-2xl' /> {/* ไอคอนแก้ไขโปรไฟล์ */}
-        </NavLink>
-        <NavLink to='/login' className='border border-white text-white px-4 py-2 rounded-lg hover:bg-white hover:text-red-600 transition'>
-          เข้าสู่ระบบ
-        </NavLink>
-        <NavLink to='/register' className='bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-gray-200 transition'>
-          สมัครสมาชิก
-        </NavLink>
+        {/* แสดงไอคอนโปรไฟล์ถ้าผู้ใช้ล็อกอินแล้ว */}
+        {user && (
+          <NavLink to='/profile' className='text-white hover:text-gray-200 transition'>
+            <FaUserEdit className='text-2xl' /> {/* ไอคอนแก้ไขโปรไฟล์ */}
+          </NavLink>
+        )}
+
+        {/* แสดงข้อมูลผู้ใช้และปุ่ม Logout ถ้าผู้ใช้ล็อกอินแล้ว */}
+        {user ? (
+          <div className='flex items-center space-x-4'>
+            <span className='text-white'>Welcome, {user.email}</span>
+            <button 
+              onClick={logout} 
+              className='border border-white text-white px-4 py-2 rounded-lg hover:bg-white hover:text-red-600 transition'
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          // แสดงปุ่ม "เข้าสู่ระบบ" และ "สมัครสมาชิก" ถ้าผู้ใช้ยังไม่ล็อกอิน
+          <div className='flex items-center space-x-4'>
+            <NavLink to='/login' className='border border-white text-white px-4 py-2 rounded-lg hover:bg-white hover:text-red-600 transition'>
+              เข้าสู่ระบบ
+            </NavLink>
+            <NavLink to='/register' className='bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-gray-200 transition'>
+              สมัครสมาชิก
+            </NavLink>
+          </div>
+        )}
       </div>
     </nav>
   );

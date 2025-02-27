@@ -73,7 +73,7 @@ const Products = () => {
                   to={`/edit-product/${product.id}`}
                   className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-400 transition duration-300"
                 >
-                  แก้ไข
+                  เพิ่ม
                 </Link>
                 <button
                   onClick={() => handleDelete(product.id)}

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import arrow from '../img/arrow.png'; // นำเข้าไฟล์ PNG
+import { updateUser } from '../services/api';
 
-const EditProfile = () => {
+const Profile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [profileImage, setProfileImage] = useState(null);
@@ -16,7 +18,7 @@ const EditProfile = () => {
     const fetchCustomerProfile = async () => {
       try {
         // เรียก API เพื่อดึงข้อมูลลูกค้า
-        const response = await fetch('/api/customer-profile');
+        const response = await fetch('/user');
         const data = await response.json();
         setName(data.name);
         setEmail(data.email);
@@ -43,6 +45,7 @@ const EditProfile = () => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
+    formData.append('password', password);
     formData.append('phone', phone);
     formData.append('address', address);
     if (profileImage) {
@@ -51,7 +54,7 @@ const EditProfile = () => {
 
     try {
       // เรียก API เพื่ออัปเดตข้อมูลลูกค้า
-      const response = await fetch('/api/user', {
+      const response = await fetch('/user', {
         method: 'PUT',
         body: formData,
       });
@@ -77,7 +80,7 @@ const EditProfile = () => {
           <img src={arrow} alt="กลับ" className="w-6 h-6 mr-2" /> กลับ
         </button>
 
-        <h2 className="text-2xl font-bold text-center text-red-600">แก้ไขโปรไฟล์ลูกค้า</h2>
+        <h2 className="text-2xl font-bold text-center text-red-600">โปรไฟล์ลูกค้า</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* ชื่อ */}
           <div>
@@ -101,6 +104,19 @@ const EditProfile = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
               placeholder="กรอกอีเมล"
+              required
+            />
+          </div>
+
+          {/* รหัสผ่าน */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">รหัสผ่าน</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 mt-1 border rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              placeholder="กรอกรหัสผ่าน"
               required
             />
           </div>
@@ -162,4 +178,4 @@ const EditProfile = () => {
   );
 };
 
-export default EditProfile;
+export default Profile;
