@@ -36,9 +36,9 @@ const Products = () => {
       <div className="max-w-7xl mx-auto">
         {/* หัวข้อและปุ่มเพิ่มสินค้า */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">จัดการสินค้า</h2>
+          <h2 className="text-3xl font-bold text-gray-800">เลือกสินค้า</h2>
           <Link
-            to="/add-product"
+            to="/cart"
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-300"
           >
             เพิ่มสินค้า

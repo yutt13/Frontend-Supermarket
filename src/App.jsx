@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import SearchResults from "./pages/Search";
 import Products from "./pages/Products";
 import EditProfile from "./pages/EditProfile";
+import AddToCart from "./pages/Addtocart";
 
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/products" element={<Products/>} />
           <Route path="/profile" element={<EditProfile/>} />
+          <Route path="/cart" element={<AddToCart/>} />
 
         
           <Route path="*" element={<NotFound />} />
